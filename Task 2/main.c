@@ -61,12 +61,12 @@ void draw(){
 }
 
 void move(int h, int v){
-    char target;
-    target = maze[x + v][y + h];
-    switch(target){
+    char* target;
+    target = &maze[x + v][y + h];
+    switch(*target){
     case ' ':
         step ++;
-        maze[x+v][y+h] = 'P';
+        *target = 'P';
         maze[x][y] = ' ';
         x += v;
         y += h;
@@ -75,7 +75,7 @@ void move(int h, int v){
     case 'O':
         Finish = 1;
         step ++;
-        maze[x+v][y+h] = 'P';
+        *target = 'P';
         maze[x][y] = ' ';
         x += v;
         y += h;
