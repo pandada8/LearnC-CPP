@@ -7,13 +7,19 @@
     }
 #endif // __WINDOWS_
 #ifdef linux
-
+    // this code is copied from StackOverflow
+    #include <termios.h>
+    #include <unistd.h>
     char getControlChar(){
-        char ret;
-        system("stty raw");
-        ret = getchar();
-        system("stty cooked");
-        return ret;
+        struct termios oldattr, newattr;
+        int ch;
+        tcgetattr( STDIN_FILENO, &oldattr );
+        newattr = oldattr;
+        newattr.c_lflag &= ~( ICANON | ECHO );
+        tcsetattr( STDIN_FILENO, TCSANOW, &newattr );
+        ch = getchar();
+        tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
+        return ch;
     }
 #endif // linux
 
@@ -39,7 +45,12 @@ int step = 0;
 int x = 4, y = 0;
 void draw(){
     int i,j;
+#ifdef __WINDOWS_
     system("cls");
+#endif
+#ifdef linux
+    system("clear");
+#endif
     for (i = 0;i < V; i++){
         for(j = 0; j < H;j++ ){
             printf("%c",maze[i][j]);
@@ -81,8 +92,7 @@ int main(){
     // start main loop
     char control;
     draw();
-    while (control = getControlChar()){
-        putchar(control);
+    while ((control = getControlChar())){
         switch(control){
         case 'W':
         case 'w':
