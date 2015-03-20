@@ -23,7 +23,7 @@
     }
 #endif // linux
 
-
+#define VALID(a, b) (((a) >= 0) && ((a) < (b)))
 
 #define H 10
 #define V 10
@@ -32,12 +32,12 @@ char maze[V][H] = {
     {'#','#','#','#','#','#','#','#','#','#'},
     {'#','#',' ',' ',' ','#',' ','#',' ','#'},
     {'#','#',' ','#',' ','#',' ','#',' ','#'},
-    {'#','#',' ','#',' ','#',' ',' ',' ','#'},
-    {'P',' ',' ','#',' ',' ',' ','#',' ','#'},
-    {'#','#','#','#','#','#','#','#',' ','#'},
-    {'#',' ','#',' ',' ',' ',' ',' ',' ','#'},
-    {'#',' ','#',' ','#','#','#','#','#','#'},
-    {'#',' ','#',' ',' ',' ',' ',' ',' ','O'},
+    {'#','#',' ',' ',' ','#',' ',' ',' ','#'},
+    {'P','O',' ',' ',' ',' ',' ','#',' ','#'},
+    {'#','#','#',' ','#','#','#','#',' ','#'},
+    {'#',' ',' ',' ',' ',' ',' ',' ',' ','#'},
+    {'#',' ',' ',' ','#','#','#','#','#','#'},
+    {'#',' ',' ',' ',' ',' ',' ',' ',' ','X'},
     {'#','#','#','#','#','#','#','#','#','#'}
 };
 char Finish= 0;
@@ -61,32 +61,47 @@ void draw(){
 }
 
 void move(int h, int v){
-    char* target;
+    char* target, *target_next;
     target = &maze[x + v][y + h];
-    switch(*target){
-    case ' ':
+    target_next = VALID(x+2*v,V) && VALID(y+2*h, H) ? &maze[x + 2 * v][y + 2 * h] : NULL;
+    if (*target == ' '){
         step ++;
         *target = 'P';
-        maze[x][y] = ' ';
-        x += v;
-        y += h;
-        draw();
-        break;
-    case 'O':
-        Finish = 1;
-        step ++;
-        *target = 'P';
-        maze[x][y] = ' ';
-        x += v;
-        y += h;
-        draw();
-        printf("You Win!");
-        break;
-    case '#':
-    default:
-        return;
-    };
 
+        maze[x][y] = ' ';
+        x += v;
+        y += h;
+        draw();
+        return;
+    }else if(*target == 'O'){
+        // Wow a box!
+        if (*target_next == ' '){
+            // blank, go, go, go!
+            step ++;
+            *target = 'P';
+            *target_next = 'O';
+            maze[x][y] = ' ';
+            x += v;
+            y += h;
+            draw();
+            return;
+        }else if (*target_next == 'X'){
+            // Wow, you got it!
+            step ++;
+            Finish = 1;
+            *target = 'P';
+            *target_next = '@';
+            maze[x][y] = ' ';
+            x += v;
+            y += h;
+            draw();
+            printf("You got it!");
+            exit(0);
+            return;
+        }
+    }else{
+        return;
+    }
 }
 int main(){
     // start main loop
