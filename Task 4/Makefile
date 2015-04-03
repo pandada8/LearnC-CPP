@@ -9,5 +9,6 @@ run:stack
 	./stack
 
 clean:
-	rm stack
+	rm -rf stack
+	rm -rf data.dat
 
