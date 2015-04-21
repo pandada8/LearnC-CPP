@@ -3,7 +3,7 @@ cc = g++
 cflags = -Wall
 
 stack:main.cpp
-	$(cc) $(cflags) main.cpp safe_array.cpp -o main
+	$(cc) $(cflags) main.cpp safe_array.cpp -o main -O3
 
 run:stack
 	./main

@@ -10,4 +10,5 @@ int main(){
 	}else{
 		cout << "Error: " << array[10];
 	}
+	cout << endl << array << endl;
 }
